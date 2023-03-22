@@ -22,17 +22,17 @@ class UnitTest {
 
     @Test
     fun testCaoDodgeAttack() { //Test Doubles - Stub
-        monarchHero = CaoCao()
+        monarchHero = FakeMonarchFactory.createRandomHero() as MonarchHero
         for (i in 0..6) {
-            heroes.add(NonMonarchFactory.createRandomHero())
+            heroes.add(FakeNonMonarchFactory.createRandomHero())
         }
-        play()
+        //play()
         assertTrue(monarchHero.dodgeAttack()) //CaoCao dodgeAttack
     }
 
     @Test
     fun testBeingAttacked() { //Test Doubles - Spy
-        if(heroes == null) {
+        for (i in 0..6) {
             heroes.add(NonMonarchFactory.createRandomHero())
         }
         val hero = NonMonarchFactory.createRandomHero()
@@ -47,7 +47,7 @@ class UnitTest {
             spy.beingAttacked()
     }
 
-    object FakeFactory: GameObjectFactory {
+    object FakeNonMonarchFactory: GameObjectFactory {
         var count = 0 //for SimaYi, XuChu and XiaHouyuan
         var last: WeiHero? = null
         init {
@@ -68,6 +68,14 @@ class UnitTest {
                 last!!.setNext(hero)
             last = hero
             return hero
+        }
+    }
+
+    object FakeMonarchFactory: GameObjectFactory {
+        override fun getRandomRole(): Role =
+            MinisterRole() //not necessary at all
+        override fun createRandomHero(): Hero {
+            return CaoCao()
         }
     }
 
