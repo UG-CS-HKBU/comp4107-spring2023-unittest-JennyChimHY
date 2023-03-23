@@ -22,11 +22,14 @@ class UnitTest {
 
     @Test
     fun testCaoDodgeAttack() { //Test Doubles - Stub
-        monarchHero = FakeMonarchFactory.createRandomHero() as MonarchHero
+        monarchHero = CaoCao()
         for (i in 0..6) {
-            heroes.add(FakeNonMonarchFactory.createRandomHero())
+            heroes.add(NonMonarchFactory.createRandomHero())
         }
-        //play()
+        for (h in heroes) {
+            h.beingAttacked()
+        }
+
         assertTrue(monarchHero.dodgeAttack()) //CaoCao dodgeAttack
     }
 
@@ -35,16 +38,45 @@ class UnitTest {
         for (i in 0..6) {
             heroes.add(NonMonarchFactory.createRandomHero())
         }
-        val hero = NonMonarchFactory.createRandomHero()
-        val spy = object: WarriorHero(MinisterRole()) {
-            override val name = hero.name
-            override fun beingAttacked() {
-                hero.beingAttacked()
-                assertTrue(hero.hp >= 0)
+        for (h in heroes) {
+            val spy = object : WarriorHero(MinisterRole()) {
+                override val name = h.name
+                override fun beingAttacked() {
+                    h.beingAttacked()
+                    assertTrue(h.hp >= 0) //0 announce die no -1
+                }
             }
+            for (i in 0..9)
+                spy.beingAttacked()
         }
-        for(i in 0..10)
-            spy.beingAttacked()
+    }
+
+    class DummyRole : Role {
+        override val roleTitle = "Dummy"
+        override fun getEnemy() = "Dummy"
+    }
+
+    @Test
+    fun testDiscardCards() { //Dummy
+        val dummy = DummyRole()
+        val hero = ZhangFei(dummy)
+        hero.discardCards()
+    }
+}
+
+class CaoCaoUnitTest { //Fake
+    @Test
+    fun testCaoDodgeAttack() { //Test Doubles - Stub
+        monarchHero = FakeMonarchFactory.createRandomHero() as MonarchHero
+        for (i in 0..6) {
+            heroes.add(FakeNonMonarchFactory.createRandomHero())
+        }
+        //similar to play()
+        for (h in heroes) {
+            h.templateMethod()
+            h.templateMethod()
+        }
+        assertTrue(monarchHero.dodgeAttack()) //CaoCao dodgeAttack
     }
 
     object FakeNonMonarchFactory: GameObjectFactory {
@@ -79,15 +111,4 @@ class UnitTest {
         }
     }
 
-    class DummyRole : Role {
-        override val roleTitle = "Dummy"
-        override fun getEnemy() = "Dummy"
-    }
-
-    @Test
-    fun testDiscardCards() { //Dummy
-        val dummy = DummyRole()
-        val hero = ZhangFei(dummy)
-        hero.discardCards()
-    }
 }
